@@ -13,6 +13,23 @@ block_size = 30
 
 Bakgrund_Himmel = pygame.image.load('bilder/Bakgrund_Himmel.png')
 
+class värld():
+    def __init__(self, data):
+        self.block_list = []
+        Gräs_Block = pygame.image.load('bilder/Gräs_Block.png')
+        for row in data:
+            col_count = 0
+            for tile in row:
+                if tile == 1:
+                    img = pygame.transform.scale(Gräs_Block, (block_size, block_size))
+                    img_rect = img.get_rect()
+                    img_rect.x = col_count * block_size
+                    img_rect.y = row_count * block_size
+                    block = (img, img_rect)
+                    self.block_list.append(block)
+                col_count += 1
+            row_count += 1
+
 värld_block = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,],
@@ -35,6 +52,8 @@ värld_block = [
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,],
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
 ]
+
+värld = Värld(värld_block)
 
 run = True
 while run:
