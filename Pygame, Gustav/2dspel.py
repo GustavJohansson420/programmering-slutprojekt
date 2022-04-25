@@ -6,12 +6,35 @@ pygame.init()
 screen_width = 600
 screen_height = 600
 
+clock = pygame.time.Clock()
+FPS = 60
+
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Gustavs spel')
 
 tile_size = 30
 
 Bakgrund_Himmel = pygame.image.load('bilder/Bakgrund_Himmel.png')
+
+class Player():
+    def __init__(self, x, y):
+        img = pygame.image.load('bilder/Gubbe2.png')
+        self.image = pygame.transform.scale(img, (24, 48))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def update(self):
+        dx = 0
+        dy = 0
+        key = pygame.key.get_pressed()
+        if key[pygame.K_a]:
+            dx -= 3
+        if key[pygame.K_d]:
+            dx += 3
+        self.rect.x += dx
+        self.rect.y += dy
+        screen.blit(self.image, self.rect)
 
 class World():
     def __init__(self, data):
@@ -60,21 +83,24 @@ world_data = [
 [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,],
 [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,],
 [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,],
-[2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,],
-[2, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,],
-[2, 0, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,],
-[2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,],
+[2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,],
+[2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,],
+[2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,],
+[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,],
 ]
 
+player = Player(60, screen_height - 78)
 world = World(world_data)
 
 run = True
 while run:
 
+    clock.tick(FPS)
+
     screen.blit(Bakgrund_Himmel, (0, 0))
 
     world.draw()
-
+    player.update()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
