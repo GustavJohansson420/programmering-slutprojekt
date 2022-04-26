@@ -18,22 +18,35 @@ Bakgrund_Himmel = pygame.image.load('bilder/Bakgrund_Himmel.png')
 
 class Player():
     def __init__(self, x, y):
-        img = pygame.image.load('bilder/DevilShit.png')
+        img = pygame.image.load('bilder/Gubbe2.png')
         self.image = pygame.transform.scale(img, (24, 48))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.vel_y = 0
+        self.jumped = False
 
     def update(self):
         dx = 0
         dy = 0
         key = pygame.key.get_pressed()
-        if key[pygame.K_a]:
-            dx -= 3
-        if key[pygame.K_d]:
-            dx += 3
+        if key[pygame.K_LEFT]:
+            dx -= 4
+        if key[pygame.K_RIGHT]:
+            dx += 4
+        if key[pygame.K_SPACE] and self.jumped == False:
+            self.vel_y = -13
+            self.jumped = True
+        if key[pygame.K_SPACE] == False:
+            self.jumped = False
+        self.vel_y += 1
+        if self.vel_y > 7:
+            self.vel_y = 7
+        dy += self.vel_y
         self.rect.x += dx
         self.rect.y += dy
+        if self.rect.bottom > screen_height:
+            self.rect.bottom = screen_height
         screen.blit(self.image, self.rect)
 
 class World():
