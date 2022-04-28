@@ -18,8 +18,14 @@ Bakgrund_Himmel = pygame.image.load('bilder/Bakgrund_Himmel.png')
 
 class Player():
     def __init__(self, x, y):
-        img = pygame.image.load('bilder/Gubbe2.png')
-        self.image = pygame.transform.scale(img, (24, 48))
+        self.images_right = []
+        self.index = 0
+        self.counter = 0
+        for num in range(1, 3):
+            img_right = pygame.image.load(f'bilder/Gubbe{num}.png')
+            img_right = pygame.transform.scale(img_right, (24, 48))
+            self.images_right.append(img_right)
+        self.image = self.images_right[self.index]
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -29,16 +35,36 @@ class Player():
     def update(self):
         dx = 0
         dy = 0
+        walk_cooldown = 3
+
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT]:
             dx -= 4
+            self.counter += 1
         if key[pygame.K_RIGHT]:
             dx += 4
+            self.counter += 1
         if key[pygame.K_SPACE] and self.jumped == False:
             self.vel_y = -13
             self.jumped = True
         if key[pygame.K_SPACE] == False:
             self.jumped = False
+        if key[pygame.K_LEFT] == False and key[pygame.K_RIGHT] == False:
+            self.counter = 0
+            self.index = 0
+            self.image = self.images_right[self.index]
+        if key[pygame.K_LEFT] == True and key[pygame.K_RIGHT] == True:
+            self.counter = 0
+            self.index = 0
+            self.image = self.images_right[self.index]
+
+        if self.counter > walk_cooldown:
+            self.counter = 0
+            self.index += 1
+            if self.index >= len(self.images_right):
+                self.index = 0
+            self.image = self.images_right [self.index]
+
         self.vel_y += 1
         if self.vel_y > 7:
             self.vel_y = 7
