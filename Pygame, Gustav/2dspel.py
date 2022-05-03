@@ -16,6 +16,17 @@ tile_size = 30
 game_over = 0
 
 Bakgrund_Himmel = pygame.image.load('bilder/Bakgrund_Himmel.png')
+restart_img = pygame.image.load('bilder/Börja_Om.png')
+
+class Button():
+    def __init__(self, x, y, image):
+        self.image = image
+        self.rect = self.image.get_rect() 
+        self.rect.x = x
+        self.rect.y = y
+
+    def draw(self):
+        screen.blit(self.image, self.rect)
 
 class Player():
     def __init__(self, x, y):
@@ -39,6 +50,7 @@ class Player():
         self.vel_y = 0
         self.jumped = False
         self.direction = 0
+        self.in_air = True
 
     def update(self, game_over):
         dx = 0
@@ -56,7 +68,7 @@ class Player():
                 dx += 4
                 self.counter += 1
                 self.direction = 1
-            if key[pygame.K_SPACE] and self.jumped == False:
+            if key[pygame.K_SPACE] and self.jumped == False and self.in_air == False:
                 self.vel_y = -13
                 self.jumped = True
             if key[pygame.K_SPACE] == False:
@@ -88,6 +100,7 @@ class Player():
                 self.vel_y = 7
             dy += self.vel_y
 
+            self.in_air = True
             for tile in world.tile_list:
                 if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height): 
                     dx = 0           
@@ -98,6 +111,7 @@ class Player():
                     elif self.vel_y >= 0:
                         dy = tile[1].top - self.rect.bottom
                         self.vel_y = 0
+                        self.in_air = False
 
             if pygame.sprite.spritecollide(self, DevilShit_group, False):
                 game_over = -1
@@ -167,7 +181,7 @@ class Enemy(pygame.sprite.Sprite):
     def update(self):
         self.rect.x += self.move_direction
         self.move_counter += 1
-        if abs(self.move_counter) > 30:
+        if abs(self.move_counter) > 29:
             self.move_direction *= -1
             self.move_counter *= -1
 
@@ -193,7 +207,7 @@ world_data = [
 [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 2,],
 [2, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2,],
 [2, 0, 0, 0, 0, 0, 0, 1, 1, 1, 4, 4, 4, 1, 2, 0, 0, 0, 0, 2,],
-[2, 0, 0, 0, 0, 3, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 2,],
+[2, 0, 0, 0, 0, 3, 0, 2, 2, 2, 1, 1, 1, 2, 2, 0, 0, 0, 0, 2,],
 [2, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2,],
 [2, 1, 1, 1, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,],
 [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 2,],
@@ -206,6 +220,7 @@ player = Player(60, screen_height - 198)
 DevilShit_group = pygame.sprite.Group()
 Spikar_group = pygame.sprite.Group()
 world = World(world_data)
+restart_buttom = Button(screen_width // 2, screen_height // 2, restart_img)
 
 run = True
 while run:
@@ -224,6 +239,11 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if event.type == pygame.KEYDOWN:
+            key = pygame.key.get_pressed()
+            if key[pygame.K_ESCAPE]:
+                run = False
+
 
     pygame.display.update()
 
