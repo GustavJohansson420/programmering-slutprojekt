@@ -24,9 +24,24 @@ class Button():
         self.rect = self.image.get_rect() 
         self.rect.x = x
         self.rect.y = y
+        self.clicked = False
 
     def draw(self):
+        action = False
+
         screen.blit(self.image, self.rect)
+
+        pos = pygame.mouse.get_pos()
+
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+                self.clicked = True
+                action = True
+        
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.clicked = False
+    
+        return action
 
 class Player():
     def __init__(self, x, y):
@@ -220,7 +235,7 @@ player = Player(60, screen_height - 198)
 DevilShit_group = pygame.sprite.Group()
 Spikar_group = pygame.sprite.Group()
 world = World(world_data)
-restart_buttom = Button(screen_width // 2, screen_height // 2, restart_img)
+restart_buttom = Button(screen_width // 2 - 85, screen_height // 2, restart_img)
 
 run = True
 while run:
@@ -232,9 +247,13 @@ while run:
     world.draw()
     if game_over == 0:
         DevilShit_group.update()
+
     DevilShit_group.draw(screen)
     Spikar_group.draw(screen)
     game_over = player.update(game_over)
+
+    if game_over == -1:
+        restart_buttom.draw()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
