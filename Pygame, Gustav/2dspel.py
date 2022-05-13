@@ -17,6 +17,8 @@ game_over = 0
 
 Bakgrund_Himmel = pygame.image.load('bilder/Bakgrund_Himmel.png')
 restart_img = pygame.image.load('bilder/Börja_Om.png')
+start_img = pygame.image.load('bilder/Start.png')
+quit_img = pygame.image.load('bilder/Quit.png')
 
 class Button():
     def __init__(self, x, y, image):
@@ -35,8 +37,8 @@ class Button():
 
         if self.rect.collidepoint(pos):
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                self.clicked = True
                 action = True
+                self.clicked = True
         
         if pygame.mouse.get_pressed()[0] == 0:
             self.clicked = False
@@ -45,27 +47,7 @@ class Button():
 
 class Player():
     def __init__(self, x, y):
-        self.images_right = []
-        self.images_left = []
-        self.index = 0
-        self.counter = 0
-        for num in range(1, 3):
-            img_right = pygame.image.load(f'bilder/Gubbe{num}.png')
-            img_right = pygame.transform.scale(img_right, (24, 48))
-            img_left = pygame.transform.flip(img_right, True, False)
-            self.images_right.append(img_right)
-            self.images_left.append(img_left)
-        self.dead_image = pygame.image.load('bilder/Död_Gubbe.png')
-        self.image = self.images_right[self.index]
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.width = self.image.get_width()
-        self.height = self.image.get_height()
-        self.vel_y = 0
-        self.jumped = False
-        self.direction = 0
-        self.in_air = True
+        self.reset(x, y)
 
     def update(self, game_over):
         dx = 0
@@ -146,6 +128,29 @@ class Player():
         screen.blit(self.image, self.rect)
 
         return game_over
+
+    def reset(self, x, y):
+        self.images_right = []
+        self.images_left = []
+        self.index = 0
+        self.counter = 0
+        for num in range(1, 3):
+            img_right = pygame.image.load(f'bilder/Gubbe{num}.png')
+            img_right = pygame.transform.scale(img_right, (24, 48))
+            img_left = pygame.transform.flip(img_right, True, False)
+            self.images_right.append(img_right)
+            self.images_left.append(img_left)
+        self.dead_image = pygame.image.load('bilder/Död_Gubbe.png')
+        self.image = self.images_right[self.index]
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+        self.vel_y = 0
+        self.jumped = False
+        self.direction = 0
+        self.in_air = True
 
 class World():
     def __init__(self, data):
@@ -253,7 +258,9 @@ while run:
     game_over = player.update(game_over)
 
     if game_over == -1:
-        restart_buttom.draw()
+        if restart_buttom.draw():
+            player.reset(60, screen_height - 198)
+            game_over = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
