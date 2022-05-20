@@ -14,6 +14,7 @@ pygame.display.set_caption('Prebens Äventyr')
 
 tile_size = 30
 game_over = 0
+main_menu = True
 
 Bakgrund_Himmel = pygame.image.load('bilder/Bakgrund_Himmel.png')
 restart_img = pygame.image.load('bilder/Börja_Om.png')
@@ -241,6 +242,8 @@ DevilShit_group = pygame.sprite.Group()
 Spikar_group = pygame.sprite.Group()
 world = World(world_data)
 restart_buttom = Button(screen_width // 2 - 85, screen_height // 2, restart_img)
+start_button = Button(screen_width // 2 - 110, screen_height // 2 - 130, start_img)
+quit_button = Button(screen_width // 2 - 95, screen_height // 2, quit_img)
 
 run = True
 while run:
@@ -249,18 +252,24 @@ while run:
 
     screen.blit(Bakgrund_Himmel, (0, 0))
 
-    world.draw()
-    if game_over == 0:
-        DevilShit_group.update()
+    if main_menu == True:
+        if quit_button.draw():
+            run = False
+        if start_button.draw():
+            main_menu = False
+    else:
+        world.draw()
+        if game_over == 0:
+            DevilShit_group.update()
 
-    DevilShit_group.draw(screen)
-    Spikar_group.draw(screen)
-    game_over = player.update(game_over)
+        DevilShit_group.draw(screen)
+        Spikar_group.draw(screen)
+        game_over = player.update(game_over)
 
-    if game_over == -1:
-        if restart_buttom.draw():
-            player.reset(60, screen_height - 198)
-            game_over = 0
+        if game_over == -1:
+            if restart_buttom.draw():
+                player.reset(60, screen_height - 198)
+                game_over = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
